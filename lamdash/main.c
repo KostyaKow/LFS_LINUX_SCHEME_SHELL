@@ -56,6 +56,9 @@ void array_add_ptr(array_t* arr, pointer item) {}
 #define array_get(arr_, index, type) \
   (*((type*)((arr_)->arr[index])))
 
+#define array_for_each(arr_, i_name) \
+   for (int i_name = 0; i_name < (arr_).num; i_name++)
+
 void _print_array_info(array_t* arr) {
    printf("\nnum: %zu, len: %zu",
           arr->num, arr->len);
@@ -85,10 +88,10 @@ enum { PARSE_UNTERM_STR };
    assert(0);
 }*/
 
-void lex(const char* s) {
+array_t* lex(const char* s) {
    int s_len = strlen(s);
-   array_t arr;
-   array_new(&arr);
+   array_t* arr = malloc(sizeof(array_t));
+   array_new(arr);
 
    char* curr_lex;
    int curr_lex_len;
@@ -111,7 +114,6 @@ void lex(const char* s) {
          }
          curr_lex_len = str_i - i;
          curr_lex = malloc(curr_lex_len);
-         printf("\tcurr_lex: %i", curr_lex_len);
          strncpy(curr_lex, s + i, curr_lex_len);
          i = str_i;//-1;
       }
@@ -137,23 +139,24 @@ void lex(const char* s) {
          strncpy(curr_lex, s + i, curr_lex_len);
          i = lex_i-1;
       }
-      array_add(&arr, curr_lex, curr_lex_len);
+      array_add(arr, curr_lex, curr_lex_len);
       free(curr_lex);
    }
 
-   printf("\nnow stuff:");
-   for (int i = 0; i < arr.num; i++) {
+   /*printf("\nnow stuff:");
+   for (int i = 0; i < arr->num; i++) {
       printf("\nlexeme %i: ^", i);
-      for (int j = 0; j < arr.size_each[i]; j++)
-         printf("%c", arr.arr[i][j]);
+      for (int j = 0; j < arr->size_each[i]; j++)
+         printf("%c", arr->arr[i][j]);
       printf("^");
-   }
+   }*/
+   return arr;
 }
 
 int main() {
    const char* s = "(hello (+ fdsf \"   \" sdf) ewr)";
    printf(s);
-   lex(s);
+   array_t* lexes = lex(s);
 }
 
 
